@@ -1,9 +1,10 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const axios = require("axios");
+const cors = require('cors'); // Import cors package
 const path = require("path");
 const currency = require("./modules/api/currency");
-const places = require("./modules/api/places"); 
+const places = require("./modules/api/places");
 const timezone = require("./modules/api/timezone");
 
 dotenv.config();
@@ -15,7 +16,14 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
 app.use(express.static(path.join(__dirname, "public")));
 
-// Middleware 
+// Enable CORS middleware for specific frontend origin
+app.use(cors({
+  origin: 'https://freelancer-toolkit-frontend-react.vercel.app', // Frontend URL
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+// Middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
