@@ -16,11 +16,14 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
 app.use(express.static(path.join(__dirname, "public")));
 
-// Enable CORS middleware for specific frontend origin
+// Enable CORS middleware for multiple frontend origins
 app.use(cors({
-  origin: 'https://freelancer-toolkit-frontend-react.vercel.app', // Frontend URL
+  origin: [
+    'https://freelancer-toolkit-frontend-react.vercel.app',  // Vercel Frontend
+    'http://localhost:5173',  // Localhost Frontend
+  ],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
 // Middleware
