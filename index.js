@@ -14,7 +14,7 @@ const mongoURI = process.env.MONGODB_URI;
 const authRoutes = require("./routes/authRoutes");
 const Task = require('./models/Task'); // Import the Task model
 const User = require('./models/User'); // Import the User model
-const Project = require('./models/Project'); // Import Project model
+const Project = require('./models/Projects'); // Import Project model
 const Workspace = require('./models/Workspace'); // Import the Workspace model
 const CurrencyConversion = require('./models/CurrencyConversion'); // Import the CurrencyConversion model
 
