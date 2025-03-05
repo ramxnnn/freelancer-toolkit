@@ -1,6 +1,6 @@
 const express = require('express');
 const axios = require('axios');
-const Project = require('../models/Project');
+const Project = require('../models/Projects');
 const router = express.Router();
 require('dotenv').config();
 
