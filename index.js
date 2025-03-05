@@ -290,66 +290,9 @@ app.get('/invoices', authenticateToken, async (req, res) => {
   }
 });
 
-// Create a Project (Protected Route)
-app.post('/projects', authenticateToken, async (req, res) => {
-  try {
-    const { name, status, dueDate, location, currency } = req.body;
-
-    // Fetch timezone and currency conversion
-    const placesUrl = `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${encodeURIComponent(location)}&inputtype=textquery&fields=geometry&key=${process.env.PLACES_API_KEY}`;
-    const placesResponse = await axios.get(placesUrl);
-
-    if (!placesResponse.data.candidates || placesResponse.data.candidates.length === 0) {
-      return res.status(400).json({ message: `No results found for "${location}".` });
-    }
-
-    const { lat, lng } = placesResponse.data.candidates[0].geometry.location;
-    const timestamp = Math.floor(Date.now() / 1000);
-    const tz = await timezone.getTimezone(lat, lng, timestamp);
-
-    const convertedRate = await currency.getExchangeRates('USD', currency, 1); // Convert USD to the given currency
-
-    if (!tz.timeZoneId || !convertedRate) {
-      return res.status(400).json({ message: 'Failed to fetch timezone or currency data' });
-    }
-
-    const project = new Project({
-      name,
-      status,
-      dueDate,
-      location,
-      currency,
-      timezone: tz.timeZoneId,
-      userId: req.user._id, // Add userId from the authenticated user
-    });
-
-    await project.save();
-    res.status(201).json(project);
-  } catch (error) {
-    res.status(500).json({ message: 'Error creating project', error });
-  }
-});
-
-// Get All Projects for the Logged-in User (Protected Route)
-app.get('/projects', authenticateToken, async (req, res) => {
-  try {
-    const projects = await Project.find({ userId: req.user._id }); // Fetch projects for the logged-in user
-    res.json(projects);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching projects', error });
-  }
-});
-
-// Delete a Project (Protected Route)
-app.delete('/projects/:id', authenticateToken, async (req, res) => {
-  try {
-    const project = await Project.findOneAndDelete({ _id: req.params.id, userId: req.user._id }); // Ensure the user owns the project
-    if (!project) return res.status(404).json({ message: 'Project not found' });
-    res.status(200).json({ message: 'Project deleted successfully' });
-  } catch (error) {
-    res.status(500).json({ message: 'Error deleting project', error });
-  }
-});
+// Import and use the projects routes
+const projectsRoutes = require('./routes/projects');
+app.use(projectsRoutes);
 
 // Start Server
 app.listen(port, () => {
