@@ -2,6 +2,7 @@ const express = require('express');
 const axios = require('axios');
 const Project = require('../models/Projects');
 const router = express.Router();
+const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const EXCHANGE_API_KEY = process.env.EXCHANGE_API_KEY;
