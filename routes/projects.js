@@ -3,6 +3,7 @@ const axios = require('axios');
 const Project = require('../models/Projects');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
+const projectController = require('../controllers/projectController'); // Import the controller
 require('dotenv').config();
 
 const EXCHANGE_API_KEY = process.env.EXCHANGE_API_KEY;
@@ -63,14 +64,7 @@ router.post('/projects', authenticateToken, async (req, res) => {
 });
 
 // Get All Projects for the Logged-in User (Protected Route)
-router.get('/projects', authenticateToken, async (req, res) => {
-  try {
-    const projects = await Project.find({ userId: req.user._id }); // Fetch projects for the logged-in user
-    res.json(projects);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching projects', error });
-  }
-});
+router.get('/projects', authenticateToken, projectController.getProjects);
 
 // Delete a Project (Protected Route)
 router.delete('/projects/:id', authenticateToken, async (req, res) => {
@@ -82,5 +76,8 @@ router.delete('/projects/:id', authenticateToken, async (req, res) => {
     res.status(500).json({ message: 'Error deleting project', error });
   }
 });
+
+// Calculate Earnings for a Project (Protected Route)
+router.get('/projects/:projectId/earnings', authenticateToken, projectController.calculateEarnings);
 
 module.exports = router;
